@@ -5,7 +5,7 @@ export default ({
   surveys = []
 }) =>
   <SurveyList>
-    { surveys.map(survey => <Survey survey={survey} />) }
+    { surveys.map((survey, index) => <Survey key={index} survey={survey} />) }
   </SurveyList>
 
 

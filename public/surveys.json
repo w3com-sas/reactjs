@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "name": "Do you like chocolate ?",
+    "answers": [
+      "Yes",
+      "No",
+      "Maybe"
+    ],
+    "by": "John Doe",
+    "nbAnswers": 5
+  },
+  {
+    "id": 2,
+    "name": "Is React a shitty lib ?",
+    "answers": [
+      "Yes, it fart's",
+      "Duno",
+      "Nop, i like it"
+    ],
+    "by": "Jane Doe",
+    "nbAnswers": 3
+  },
+  {
+    "id": 3,
+    "name": "How much is 1 ?",
+    "answers": [
+      "1",
+      "1 * 2 / 3 ^ 9",
+      "Maybe"
+    ],
+    "by": "Eliot The Pilot",
+    "nbAnswers": 2
+  },
+  {
+    "id": 4,
+    "name": "What is the meaning of life ?",
+    "answers": [
+      "Eat / Sleep / Drink",
+      "1",
+      "Maybe"
+    ],
+    "by": "The philosopher",
+    "nbAnswers": 10
+  }
+]
