@@ -1,7 +1,8 @@
-import { createAction, createReducer } from 'redux-starter-kit'
-import React from 'react'
-import styled from 'styled-components'
 import { connect } from 'react-redux'
+import { createAction, createReducer } from 'redux-starter-kit'
+import { graphQuery } from './Util'
+import React, { useEffect } from 'react'
+import styled from 'styled-components'
 
 
 // Redux:
@@ -24,6 +25,16 @@ export const RECEIVE_SURVEYS = 'SurveyList: Receive surveys data from the graphq
 export const receiveSurveys = createAction(RECEIVE_SURVEYS)
 
 
+export const fetch = () => dispatch => {
+  dispatch(fetchSurveys);
+
+  graphQuery(`{ surveys { id, name, nbAnswers, createdAt, by } }`)
+    .then(({ surveys }) => {
+      dispatch(receiveSurveys(surveys));
+    })
+}
+
+
 export const reducer = createReducer(initialState, {
   [fetchSurveys]: (state, action) => ({
     ...state,
@@ -42,11 +53,17 @@ export const reducer = createReducer(initialState, {
 
 
 export const SurveyList = ({
-  surveys = []
-}) =>
-  <SurveyListContainer>
-    { surveys.map((survey, index) => <Survey key={index} survey={survey} />) }
-  </SurveyListContainer>
+  surveys = [],
+  dispatch,
+}) => {
+  useEffect(() => dispatch(fetch()), [true]);
+
+  return (
+    <SurveyListContainer>
+      { surveys.map((survey, index) => <Survey key={index} survey={survey} />) }
+    </SurveyListContainer>
+  )
+}
 
 
 export default connect(
