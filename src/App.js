@@ -22,7 +22,7 @@ export default () => {
     : (
       <div className="App">
         <Header />
-        <SurveyList surveys={surveys} />
+        <SurveyList />
         <Footer />
         <NewSurvey />
       </div>

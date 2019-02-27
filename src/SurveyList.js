@@ -1,15 +1,60 @@
+import { createAction, createReducer } from 'redux-starter-kit'
 import React from 'react'
 import styled from 'styled-components'
+import { connect } from 'react-redux'
 
-export default ({
+
+// Redux:
+
+export const initialState = {
+  surveys: [],
+  loading: true,
+}
+
+
+export const FETCH_SURVEYS = 'SurveyList: Fetch data from the graphql api'
+
+
+export const fetchSurveys = createAction(FETCH_SURVEYS)
+
+
+export const RECEIVE_SURVEYS = 'SurveyList: Receive surveys data from the graphql api'
+
+
+export const receiveSurveys = createAction(RECEIVE_SURVEYS)
+
+
+export const reducer = createReducer(initialState, {
+  [fetchSurveys]: (state, action) => ({
+    ...state,
+    loading: true,
+  }),
+
+  [receiveSurveys]: (state, action) => ({
+    ...state,
+    loading: false,
+    surveys: action.payload,
+  })
+})
+
+
+// React Components:
+
+
+export const SurveyList = ({
   surveys = []
 }) =>
-  <SurveyList>
+  <SurveyListContainer>
     { surveys.map((survey, index) => <Survey key={index} survey={survey} />) }
-  </SurveyList>
+  </SurveyListContainer>
 
 
-export const SurveyList = styled.aside`
+export default connect(
+  state => ({ surveys: state.surveyList.surveys }),
+)(SurveyList)
+
+
+export const SurveyListContainer = styled.aside`
   display: flex;
   flex-direction: column;
 `
