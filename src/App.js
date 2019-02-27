@@ -9,7 +9,7 @@ export default () => {
   const [ surveys, setSurveys ] = useState([])
 
   useEffect(() => {
-    fetch('http://localhost:9090/graphql', {
+    fetch(process.env.REACT_APP_API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
