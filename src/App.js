@@ -1,3 +1,4 @@
+import { graphQuery } from './Util'
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
@@ -9,27 +10,8 @@ export default () => {
   const [ surveys, setSurveys ] = useState([])
 
   useEffect(() => {
-    fetch(process.env.REACT_APP_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: `{ surveys { id, name, by, nbAnswers, createdAt } }`,
-        variables: {},
-      })
-    })
-      .catch(error => {
-        console.alert('Mission Abort !!!')
-
-        throw error;
-      })
-      .then(response => response.json())
-      .catch(error => {
-        console.warn('Invalid Json at /sureys.json');
-        console.error(error);
-
-        return [];
-      })
-      .then(({ data: { surveys } }) => {
+    graphQuery(`{ surveys { id, name, nbAnswers, createdAt, by } }`)
+      .then(({ surveys }) => {
         setLoading(false);
         setSurveys(surveys);
       })

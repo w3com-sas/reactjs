@@ -1,5 +1,8 @@
+import { __, path, pipe, then, update } from 'ramda'
+import { graphMutate, preventDefault } from './Util'
 import React, { useState, Fragment } from 'react'
 import styled from 'styled-components'
+
 
 export default () => {
   const [ panelOpen, setPanelOpen ] = useState(false)
@@ -12,6 +15,7 @@ export default () => {
   )
 }
 
+
 export const Panel = ({
   open = false,
   onClose = () => null,
@@ -22,6 +26,7 @@ export const Panel = ({
       <Form onSubmit={onClose} />
     </PanelContainer>
   </PanelWrapper>
+
 
 export const FloatingButton = styled.button`
   outline: none;
@@ -39,6 +44,7 @@ export const FloatingButton = styled.button`
   border: 2px solid #DADADA;
 `
 
+
 export const PanelWrapper = styled.div`
   position: fixed;
   top: 0;
@@ -48,6 +54,7 @@ export const PanelWrapper = styled.div`
   max-width: 100vw;
   max-height: 100vh;
 `
+
 
 export const PanelContainer = styled.aside`
   position: absolute;
@@ -64,6 +71,7 @@ export const PanelContainer = styled.aside`
   }
 `
 
+
 export const CloseButton = styled.button`
   position: absolute;
   top: 10px;
@@ -75,11 +83,25 @@ export const CloseButton = styled.button`
   background-color: transparent;
 `
 
+
 export const Form = ({
   onSubmit = () => null,
 }) => {
   const [ answers, setAnswers ] = useState([])
   const [ name,  setName ] = useState('')
+  const addAnswer = event => setAnswers([ ...answers, '' ])
+  const addNewSurveyMutation = `
+    mutation ($input: NewSurvey!) {
+      addNewSurvey(input: $input) {
+        id
+      }
+    }
+  `
+  const variables = () => ({ input: { name, answers } })
+  const updateAnswers = index => pipe(
+    path([ 'currentTarget', 'value' ]),
+    update(index, __, answers),
+  )
 
   return (
     <FormContainer>
@@ -89,53 +111,46 @@ export const Form = ({
           type="text"
           placeholder="The survey question ?"
           value={name}
-          onChange={event => setName(event.currentTarget.value)}
+          onChange={pipe(
+            path(['currentTarget', 'value']),
+            setName,
+          )}
         />
       </FormControl>
       { answers.map((answer, index) => 
         <FormControl key={index}>
           <label>Answer:</label>
-          <input type="text" value={answer} onChange={updateAnswers(setAnswers, answers, index)} />
+          <input type="text" value={answer} onChange={pipe (
+            preventDefault,
+            updateAnswers(index),
+            setAnswers,
+          )} />
         </FormControl>
       ) }
 
       <FormControl>
-        <button onClick={event => {
-          event.preventDefault();
-
-          setAnswers([ ...answers, '' ])
-        }}>Add an answer</button>
+        <button onClick={pipe(
+          preventDefault,
+          addAnswer,
+        )}>Add an answer</button>
       </FormControl>
 
-      <button onClick={event => {
-        event.preventDefault();
-
-        fetch(process.env.REACT_APP_API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query: `mutation ($input: NewSurvey!) { addNewSurvey(input: $input) { id } }`,
-            variables: {
-              input: {
-                name,
-                answers,
-              }
-            }
-          })
-        })
-        .then(response => response.json())
-        .then(json => {
-          onSubmit();
-        })
-      }}>Ok</button>
+      <button onClick={pipe(
+        preventDefault,
+        variables,
+        graphMutate(addNewSurveyMutation),
+        then(onSubmit),
+      )}>Ok</button>
     </FormContainer>
   )
 }
+
 
 export const FormContainer = styled.form`
   margin: .5rem;
   margin-top: 2.4rem;
 `
+
 
 export const FormControl = styled.div`
   display: flex;
@@ -144,12 +159,3 @@ export const FormControl = styled.div`
     flex-basis: 30%;
   }
 `
-
-
-const updateAnswers = (setAnswers, answers, index) => event => {
-  const newAnswers = [ ...answers ]
-
-  newAnswers[index] = event.currentTarget.text
-
-  setAnswers(newAnswers);
-}
