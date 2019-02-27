@@ -9,10 +9,18 @@ export default () => {
   const [ surveys, setSurveys ] = useState([])
 
   useEffect(() => {
-    console.warn ('FETCHING SURVEYS');
-    fetch('/surveys.json')
+    fetch('http://localhost:9090/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: `{ surveys { id, name, by, nbAnswers, createdAt } }`,
+        variables: {},
+      })
+    })
       .catch(error => {
         console.alert('Mission Abort !!!')
+
+        throw error;
       })
       .then(response => response.json())
       .catch(error => {
@@ -21,7 +29,7 @@ export default () => {
 
         return [];
       })
-      .then(surveys => {
+      .then(({ data: { surveys } }) => {
         setLoading(false);
         setSurveys(surveys);
       })

@@ -19,7 +19,7 @@ export const Panel = ({
   <PanelWrapper open={open}>
     <PanelContainer open={open}>
       <CloseButton onClick={onClose}>Fermer X</CloseButton>
-      <Form />
+      <Form onSubmit={onClose} />
     </PanelContainer>
   </PanelWrapper>
 
@@ -75,21 +75,27 @@ export const CloseButton = styled.button`
   background-color: transparent;
 `
 
-export const Form = () => {
+export const Form = ({
+  onSubmit = () => null,
+}) => {
   const [ answers, setAnswers ] = useState([])
+  const [ name,  setName ] = useState('')
 
   return (
     <FormContainer>
       <FormControl>
         <label>Your survey:</label>
-        <input type="text" placeholder="The survey question ?" />
+        <input
+          type="text"
+          placeholder="The survey question ?"
+          value={name}
+          onChange={event => setName(event.currentTarget.value)}
+        />
       </FormControl>
       { answers.map((answer, index) => 
         <FormControl key={index}>
           <label>Answer:</label>
-          <input type="text" value={answer} onChange={
-            updateAnswers(setAnswers, answers, index)
-          } />
+          <input type="text" value={answer} onChange={updateAnswers(setAnswers, answers, index)} />
         </FormControl>
       ) }
 
@@ -101,7 +107,27 @@ export const Form = () => {
         }}>Add an answer</button>
       </FormControl>
 
-      <button>Ok</button>
+      <button onClick={event => {
+        event.preventDefault();
+
+        fetch('http://localhost:9090/graphql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: `mutation ($input: NewSurvey!) { addNewSurvey(input: $input) { id } }`,
+            variables: {
+              input: {
+                name,
+                answers,
+              }
+            }
+          })
+        })
+        .then(response => response.json())
+        .then(json => {
+          onSubmit();
+        })
+      }}>Ok</button>
     </FormContainer>
   )
 }
