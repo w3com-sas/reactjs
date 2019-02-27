@@ -26,9 +26,6 @@ export const RECEIVE_SURVEYS = 'SurveyList: Receive surveys data from the graphq
 export const receiveSurveys = createAction(RECEIVE_SURVEYS)
 
 
-export const fetchSurvey = () => ({ type: FETCH_SURVEYS, payload: null })
-
-
 export const reducer = createReducer(initialState, {
   [fetchSurveys]: (state, action) => ({
     ...state,
