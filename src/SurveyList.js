@@ -7,6 +7,7 @@ import styled from 'styled-components'
 
 // Redux:
 
+
 export const initialState = {
   surveys: [],
   loading: true,
@@ -25,14 +26,7 @@ export const RECEIVE_SURVEYS = 'SurveyList: Receive surveys data from the graphq
 export const receiveSurveys = createAction(RECEIVE_SURVEYS)
 
 
-export const fetch = () => dispatch => {
-  dispatch(fetchSurveys);
-
-  graphQuery(`{ surveys { id, name, nbAnswers, createdAt, by } }`)
-    .then(({ surveys }) => {
-      dispatch(receiveSurveys(surveys));
-    })
-}
+export const fetchSurvey = () => ({ type: FETCH_SURVEYS, payload: null })
 
 
 export const reducer = createReducer(initialState, {
@@ -49,25 +43,45 @@ export const reducer = createReducer(initialState, {
 })
 
 
+// Thunks:
+
+
+export const fetch = () => dispatch => {
+  dispatch(fetchSurveys());
+
+  graphQuery(`{ surveys { id, name, nbAnswers, createdAt, by } }`)
+    .then(({ surveys }) => {
+      dispatch(receiveSurveys(surveys));
+    })
+}
+
+
 // React Components:
 
 
 export const SurveyList = ({
   surveys = [],
+  loading = true,
   dispatch,
 }) => {
   useEffect(() => dispatch(fetch()), [true]);
 
   return (
     <SurveyListContainer>
-      { surveys.map((survey, index) => <Survey key={index} survey={survey} />) }
+      { loading
+        ? <p>Chargement ...</p>
+        : surveys.map((survey, index) => <Survey key={index} survey={survey} />)
+      }
     </SurveyListContainer>
   )
 }
 
 
 export default connect(
-  state => ({ surveys: state.surveyList.surveys }),
+  state => ({
+    surveys: state.surveyList.surveys,
+    loading: state.surveyList.loading,
+  }),
 )(SurveyList)
 
 
@@ -100,15 +114,18 @@ export const SurveyThumbnail = styled.article`
   border-radius: 5px;
 `
 
+
 export const SurveyInfo = ({
   by = '',
   answers = 0,
 }) => <Author>By { by } - <Answers>{ answers } answers</Answers></Author>
 
+
 export const Author = styled.span`
   color: #8DDF7E;
   font-size: .8rem;
 `
+
 
 export const Answers = styled.span`
   color: #878787;

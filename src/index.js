@@ -1,11 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-import { reducer as surveyList } from './SurveyList'
-import { configureStore } from 'redux-starter-kit'
 import { Provider } from 'react-redux'
+import { configureStore } from 'redux-starter-kit'
+import { reducer as surveyList } from './SurveyList'
+import './index.css'
+import App from './App'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import * as serviceWorker from './serviceWorker'
 
 const store = configureStore({
   reducer: {
