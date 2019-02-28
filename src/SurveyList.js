@@ -1,6 +1,8 @@
+import { RECEIVE_SURVEY, togglePane } from './NewSurveyForm'
 import { connect } from 'react-redux'
 import { createAction, createReducer } from 'redux-starter-kit'
 import { graphQuery } from './Util'
+import { prepend } from 'ramda'
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
 
@@ -17,26 +19,37 @@ export const initialState = {
 export const FETCH_SURVEYS = 'SurveyList: Fetch data from the graphql api'
 
 
-export const fetchSurveys = createAction(FETCH_SURVEYS)
+export const fetchSurveys = () => ({
+  type: FETCH_SURVEYS,
+  payload: null,
+})
 
 
 export const RECEIVE_SURVEYS = 'SurveyList: Receive surveys data from the graphql api'
 
 
-export const receiveSurveys = createAction(RECEIVE_SURVEYS)
+export const receiveSurveys = surveys => ({
+  type: RECEIVE_SURVEYS,
+  payload: surveys,
+})
 
 
 export const reducer = createReducer(initialState, {
-  [fetchSurveys]: (state, action) => ({
+  [FETCH_SURVEYS]: (state, action) => ({
     ...state,
     loading: true,
   }),
 
-  [receiveSurveys]: (state, action) => ({
+  [RECEIVE_SURVEYS]: (state, action) => ({
     ...state,
     loading: false,
     surveys: action.payload,
-  })
+  }),
+
+  [RECEIVE_SURVEY]: (state, { payload: survey }) => ({
+    ...state,
+    surveys: prepend(survey, state.surveys),
+  }),
 })
 
 
@@ -69,6 +82,7 @@ export const SurveyList = ({
         ? <p>Chargement ...</p>
         : surveys.map((survey, index) => <Survey key={index} survey={survey} />)
       }
+      <FloatingButton onClick={e => dispatch(togglePane())}>+</FloatingButton>
     </SurveyListContainer>
   )
 }
@@ -127,4 +141,21 @@ export const Author = styled.span`
 export const Answers = styled.span`
   color: #878787;
   font-size: .6rem;
+`
+
+
+export const FloatingButton = styled.button`
+  outline: none;
+  cursor: pointer;
+  background-color: #393939;
+  color: #8DDF7E;
+  font-weight: bold;
+  margin: 0;
+  padding: .6rem 1rem;
+  font-size: 2rem;
+  border-radius: 100%;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  border: 2px solid #DADADA;
 `
