@@ -2,6 +2,7 @@ import { Provider } from 'react-redux'
 import { configureStore } from 'redux-starter-kit'
 import { reducer as surveyList } from './SurveyList'
 import { reducer as newSurveyForm } from './NewSurveyForm'
+import { reducer as surveyDetail } from './SurveyDetail'
 import './index.css'
 import App from './App'
 import React from 'react'
@@ -12,6 +13,7 @@ const store = configureStore({
   reducer: {
     surveyList,
     newSurveyForm,
+    surveyDetail,
   }
 })
 

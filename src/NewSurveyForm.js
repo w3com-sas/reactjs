@@ -79,7 +79,7 @@ export const reducer = createReducer(initialState, {
 
   [removeAnswer]: (state, { payload: index }) => ({
     ...state,
-    answers: remove(1, index, state.answers),
+    answers: remove(index, 1, state.answers),
   }),
 
   [sendSurvey]: (state, action) => ({
@@ -125,6 +125,7 @@ export const FormPane = ({
   open = false,
   name = '',
   answers = [],
+  sending = false,
   dispatch,
 }) =>
   <PanelWrapper open={open}>
@@ -171,7 +172,7 @@ export const FormPane = ({
             name,
             answers,
           }))
-        }}>Send</Button>
+        }} disabled={sending}>Send</Button>
       </Form>
     </PanelContainer>
   </PanelWrapper>
@@ -256,10 +257,13 @@ export const PanelContainer = styled.aside`
   min-height: 100vh;
   background-color: white;
   transition: all .3s;
-  transform: ${({ open }) =>
+  transform: ${({ open, direction = "left" }) =>
     open
       ? 'translateX(0)'
-      : 'translateX(100vw)'
+      : `translateX(${"left" === direction
+        ? '100vw'
+        : '-100vw'
+      })`
   }
 `
 
@@ -281,5 +285,6 @@ export default connect(
     open: state.newSurveyForm.open,
     name: state.newSurveyForm.name,
     answers: state.newSurveyForm.answers,
+    sending: state.newSurveyForm.sending,
   }),
 )(FormPane)

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { createReducer } from 'redux-starter-kit'
 import { graphQuery } from './Util'
 import { prepend } from 'ramda'
+import { togglePane as toggleDetailPane } from './SurveyDetail'
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
 
@@ -59,7 +60,7 @@ export const reducer = createReducer(initialState, {
 export const fetch = () => dispatch => {
   dispatch(fetchSurveys());
 
-  graphQuery(`{ surveys { id, name, nbAnswers, createdAt, by } }`)
+  graphQuery(`{ surveys { id, name, nbAnswers, createdAt, by, answers } }`)
     .then(({ surveys }) => {
       dispatch(receiveSurveys(surveys));
     })
@@ -80,7 +81,11 @@ export const SurveyList = ({
     <SurveyListContainer>
       { loading
         ? <p>Chargement ...</p>
-        : surveys.map((survey, index) => <Survey key={index} survey={survey} />)
+        : surveys.map((survey, index) => <Survey
+          key={index}
+          survey={survey}
+          onClick={e => dispatch(toggleDetailPane(survey))}
+        />)
       }
       <FloatingButton onClick={e => dispatch(togglePane())}>+</FloatingButton>
     </SurveyListContainer>
@@ -107,9 +112,10 @@ export const Survey = ({
     name = '',
     by = '',
     nbAnswers = 0,
-  }
+  },
+  onClick = () => null,
 }) =>
-  <SurveyThumbnail>
+  <SurveyThumbnail onClick={onClick}>
     <h3>{ name }</h3>
     <SurveyInfo by={by} answers={nbAnswers} />
   </SurveyThumbnail>
