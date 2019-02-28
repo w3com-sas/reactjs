@@ -8,6 +8,7 @@ import App from './App'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import * as serviceWorker from './serviceWorker'
+import io from 'socket.io-client'
 
 const store = configureStore({
   reducer: {
@@ -15,6 +16,14 @@ const store = configureStore({
     newSurveyForm,
     surveyDetail,
   }
+})
+
+
+const socket = io(process.env.REACT_APP_SOCKET_URL)
+
+
+socket.on('newSurvey', survey => {
+  console.warn('NEW SURVEY', survey);
 })
 
 
