@@ -1,8 +1,9 @@
-import { RECEIVE_SURVEY, togglePane } from './NewSurveyForm'
+import { RECEIVE_SURVEY, receiveSurvey, togglePane } from './NewSurveyForm'
 import { connect } from 'react-redux'
 import { createReducer } from 'redux-starter-kit'
 import { graphQuery } from './Util'
 import { prepend } from 'ramda'
+import { socket } from './'
 import { togglePane as toggleDetailPane } from './SurveyDetail'
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
@@ -76,6 +77,11 @@ export const SurveyList = ({
   dispatch,
 }) => {
   useEffect(() => dispatch(fetch()), [true]);
+  useEffect(() => {
+    socket.on('newSurvey', survey => {
+      dispatch(receiveSurvey(survey))
+    })
+  }, [true])
 
   return (
     <SurveyListContainer>

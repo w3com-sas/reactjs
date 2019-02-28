@@ -19,15 +19,7 @@ const store = configureStore({
 })
 
 
-const socket = io(process.env.REACT_APP_SOCKET_URL)
-
-
-socket.on('newSurvey', survey => {
-  console.warn('NEW SURVEY', survey);
-})
-
-
-console.warn(store.dispatch({ type: 'foobar' }))
+export const socket = io(process.env.REACT_APP_SOCKET_URL)
 
 ReactDOM.render(
   <Provider store={store}>
