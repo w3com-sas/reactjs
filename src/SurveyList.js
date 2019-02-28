@@ -1,6 +1,6 @@
 import { RECEIVE_SURVEY, togglePane } from './NewSurveyForm'
 import { connect } from 'react-redux'
-import { createAction, createReducer } from 'redux-starter-kit'
+import { createReducer } from 'redux-starter-kit'
 import { graphQuery } from './Util'
 import { prepend } from 'ramda'
 import React, { useEffect } from 'react'

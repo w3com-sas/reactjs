@@ -1,9 +1,8 @@
-import { addSurvey } from './SurveyList'
 import { connect } from 'react-redux'
 import { createAction, createReducer } from 'redux-starter-kit'
 import { graphMutate } from './Util'
 import { update, remove } from 'ramda'
-import React, { Fragment } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 
